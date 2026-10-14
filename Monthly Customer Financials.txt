@@ -1,0 +1,125 @@
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    ordered_at DATETIME2 NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+CREATE TABLE order_items (
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY,
+    order_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    paid_at DATETIME2 NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+
+INSERT INTO customers (customer_id, name)
+VALUES
+(1, 'Rahul'),
+(2, 'Anu'),
+(3, 'Arun');
+
+INSERT INTO orders (order_id, customer_id, ordered_at, status)
+VALUES
+(101, 1, '2026-01-10', 'completed'),
+(102, 1, '2026-01-15', 'completed'),
+(103, 1, '2026-02-05', 'pending'),
+(104, 2, '2026-01-20', 'completed'),
+(105, 2, '2026-03-10', 'cancelled'),
+(106, 3, '2026-02-12', 'completed');
+
+INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+VALUES
+(101, 1, 2, 100.00),
+(101, 2, 1, 50.00),
+(102, 1, 3, 100.00),
+(103, 3, 2, 200.00),
+(104, 2, 4, 50.00),
+(105, 1, 5, 100.00),
+(106, 3, 1, 500.00);
+
+INSERT INTO payments (payment_id, order_id, amount, status, paid_at)
+VALUES
+(1, 101, 100.00, 'captured', '2026-01-11'),
+(2, 101, 100.00, 'captured', '2026-01-12'),
+(3, 101, 50.00, 'pending', NULL),
+(4, 102, 200.00, 'captured', '2026-01-16'),
+(5, 104, 200.00, 'captured', '2026-01-21'),
+(6, 106, 100.00, 'pending', NULL);
+
+
+
+WITH eligible_orders AS (
+    SELECT
+        order_id,
+        customer_id,
+        DATEFROMPARTS(YEAR(ordered_at), MONTH(ordered_at), 1) AS month_start
+    FROM orders
+    WHERE status <> 'cancelled'
+      AND ordered_at >= '2026-01-01'
+      AND ordered_at <  '2027-01-01'
+),
+item_totals AS (
+    SELECT
+        order_id,
+        SUM(quantity * unit_price) AS gross_order_value
+    FROM order_items
+    GROUP BY order_id
+),
+payment_totals AS (
+    SELECT
+        order_id,
+        SUM(amount) AS captured_payment_value
+    FROM payments
+    WHERE status = 'captured'
+    GROUP BY order_id
+)
+SELECT
+    c.customer_id,
+    c.name,
+    eo.month_start,
+    COUNT(*) AS order_count,
+    SUM(COALESCE(it.gross_order_value, 0)) AS gross_order_value,
+    SUM(COALESCE(pt.captured_payment_value, 0)) AS captured_payment_value,
+    SUM(COALESCE(it.gross_order_value, 0))
+        - SUM(COALESCE(pt.captured_payment_value, 0))
+        AS outstanding_value
+FROM eligible_orders eo
+JOIN customers c
+    ON c.customer_id = eo.customer_id
+LEFT JOIN item_totals it
+    ON it.order_id = eo.order_id
+LEFT JOIN payment_totals pt
+    ON pt.order_id = eo.order_id
+GROUP BY
+    c.customer_id,
+    c.name,
+    eo.month_start
+ORDER BY
+    c.customer_id,
+    eo.month_start;
+
+
+output
+Customer	Month		Orders	Gross value	Captured payments	Outstanding
+Rahul		Jan 2026	2	550.00		450.00			100.00
+Rahul		Feb 2026	1	400.00		0.00			400.00
+Anu		Jan 2026	1	200.00		200.00			0.00
+Arun		Feb 2026	1	500.00		0.00			500.00

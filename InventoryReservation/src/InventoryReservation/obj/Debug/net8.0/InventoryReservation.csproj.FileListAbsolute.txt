@@ -1,0 +1,12 @@
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.csproj.AssemblyReference.cache
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.AssemblyInfoInputs.cache
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.AssemblyInfo.cs
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.csproj.CoreCompileInputs.cache
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\bin\Debug\net8.0\InventoryReservation.deps.json
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\bin\Debug\net8.0\InventoryReservation.dll
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\bin\Debug\net8.0\InventoryReservation.pdb
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.dll
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\refint\InventoryReservation.dll
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\InventoryReservation.pdb
+c:\Users\Rahul venu\source code\InventoryReservation\src\InventoryReservation\obj\Debug\net8.0\ref\InventoryReservation.dll
